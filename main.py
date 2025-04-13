@@ -48,6 +48,8 @@ def setup_argparse():
                               help="Whisper model size (larger = more accurate but slower)")
     parser.add_argument("--language", "-l", type=str, default="en",
                               help="Language code for transcription and number conversion")
+    parser.add_argument("--ljspeech", type=bool, default=False,
+                              help="Dataset format for coqui-ai/TTS")
     parser.add_argument("--log-level", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                               default="INFO", help="Set logging level")
     
@@ -102,6 +104,7 @@ def main():
     result = transcribe_audio_files(
         audio_dir="MyTTSDataset/wavs",
         output_csv_path= "MyTTSDataset/metadata.csv",
+        ljspeech=args.ljspeech
         model_name=args.model,
         language_=args.language
     )
