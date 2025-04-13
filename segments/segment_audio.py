@@ -64,7 +64,13 @@ def segment_audio_flexible(input_path, output_dir,
             video = VideoFileClip(input_path)
             # Use the provided temp filename in the same dir as the script for simplicity
             audio_path_to_process = temp_audio_filename
-            video.audio.write_audiofile(audio_path_to_process, codec='pcm_s16le', logger=None)  # Export as WAV
+            video.audio.write_audiofile(
+                audio_path_to_process,
+                fps=22050,          # Sample rate
+                nbytes=2,           # Bytes per sample (2 for 16-bit)
+                codec='pcm_s16le',  # PCM signed 16-bit little-endian codec
+                ffmpeg_params=["-ac", "1"] # Force mono audio (1 channel)
+            )
             video.close()  # Release video file handle
             is_temporary_audio = True
             logger.info(f"Audio extracted successfully to: {audio_path_to_process}")
@@ -76,9 +82,20 @@ def segment_audio_flexible(input_path, output_dir,
             return False
     else:
         # Assume it's an audio file pydub can handle
-        audio_path_to_process = input_path
+        audio = AudioFileClip(input_path)
+        audio_path_to_process = temp_audio_filename
+        audio.write_audiofile(
+            audio_path_to_process,
+            fps=22050,          # Sample rate
+            nbytes=2,           # Bytes per sample (2 for 16-bit)
+            codec='pcm_s16le',  # PCM signed 16-bit little-endian codec
+            ffmpeg_params=["-ac", "1"] # Force mono audio (1 channel)
+        )
         logger.info("Input is assumed to be an audio file.")
-
+        
+    metadata = torchaudio.info(audio_path_to_process)
+    print("Audio information: ", metadata)
+                               
     # --- Audio Processing ---
     try:
         # Load the audio (either original or extracted)
