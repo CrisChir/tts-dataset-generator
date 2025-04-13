@@ -27,9 +27,10 @@ else:
 
 
 def transcribe_audio_files(audio_dir,
-                                  output_csv_path="metadata.csv",
-                                  model_name="large",
-                                  language_="en"):
+                           output_csv_path="metadata.csv",
+                           ljspeech=False,
+                           model_name="large",
+                           language_="en"):
     """
     Transcribes all .wav files in a directory using OpenAI's Whisper model
     and saves the results to a CSV file.
@@ -119,21 +120,38 @@ def transcribe_audio_files(audio_dir,
 
         # Store the result (filename without path, transcription)
         metadata_text.append(text)
-        metadata_audio_path.append(f'wavs/{filename}')
+        metadata_audio_path.append(filename[:-4])
 
     end_time_total = time.time()
     logger.info(f"Finished processing all files in {end_time_total - start_time_total:.2f} seconds.")
 
-    # --- Write CSV Output ---
-    logger.info(f"Writing transcriptions to: {output_csv_path}")
-    try:
-        with open(output_csv_path, 'w', encoding='utf-8') as f:
-            for i in range(len(metadata_audio_path)):
-                f.writelines(f'{metadata_audio_path[i]}|{metadata_text[i]}\n')
+    if ljspeech:
+        # --- Write CSV Output ---
+        logger.info(f"Writing ljspeech format transcriptions to: {output_csv_path}")
+        try:
+            with open(output_csv_path, 'w', encoding='utf-8') as f:
+                for i in range(len(metadata_audio_path)):
+                    f.writelines(f'{metadata_audio_path[i]}|{metadata_text[i]}|{metadata_text[i]}\n')
 
-        logger.info("Metadata CSV file created successfully.")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to write CSV file: {e}")
-        logger.debug(traceback.format_exc())
-        return False
+            logger.info("Metadata CSV file created successfully.")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to write CSV file: {e}")
+            logger.debug(traceback.format_exc())
+            return False
+
+    else:
+    
+        # --- Write CSV Output ---
+        logger.info(f"Writing transcriptions to: {output_csv_path}")
+        try:
+            with open(output_csv_path, 'w', encoding='utf-8') as f:
+                for i in range(len(metadata_audio_path)):
+                    f.writelines(f'waws/{metadata_audio_path[i]}.wav|{metadata_text[i]}\n')
+
+            logger.info("Metadata CSV file created successfully.")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to write CSV file: {e}")
+            logger.debug(traceback.format_exc())
+            return False
