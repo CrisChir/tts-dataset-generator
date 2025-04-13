@@ -3,9 +3,10 @@ import sys
 import logging
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
-from moviepy import VideoFileClip
+from moviepy import VideoFileClip, AudioFileClip
+import torchaudio
 import traceback
-
+import ffmpeg
 
 # Configure logging
 logging.basicConfig(
@@ -17,6 +18,64 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("tts_dataset_generator")
+
+
+
+
+def extract_audio_ffmpeg_py(video_path, audio_path):
+    """
+    Extracts audio from a video file and saves it as a mono, 16-bit PCM WAV
+    at 22050 Hz using ffmpeg-python.
+
+    Args:
+        video_path (str): Path to the input video file.
+        audio_path (str): Path to save the output WAV audio file.
+    """
+    print(f"Processing '{video_path}' with ffmpeg-python...")
+    try:
+        # Check if video file exists
+        if not os.path.exists(video_path):
+            print(f"Error: Video file not found at '{video_path}'")
+            return
+
+        print(f"Extracting audio to '{audio_path}'...")
+        print("Parameters: Mono, 22050 Hz, 16-bit PCM (WAV)")
+
+        # Ensure the output filename ends with .wav for clarity
+        # Although ffmpeg usually infers format, being explicit is good.
+        if not audio_path.lower().endswith('.wav'):
+             print("Warning: Output file does not end with .wav. Forcing WAV format.")
+             # audio_path += ".wav" # Or rely on format spec below
+
+        # Build the ffmpeg command pipeline
+        stream = ffmpeg.input(video_path)
+
+        # Select only the audio stream and apply filters/encoding options
+        stream = ffmpeg.output(
+            stream.audio,             # Use only the audio part of the input
+            audio_path,
+            acodec='pcm_s16le',       # Audio codec: 16-bit signed little-endian PCM
+            ac=1,                     # Audio channels: 1 (mono)
+            ar='22050',               # Audio sample rate: 22050 Hz
+            format='wav'            # Explicitly set format (optional if extension is .wav)
+        )
+
+        # Run the command, overwriting output file if it exists (-y flag)
+        # Capture stdout/stderr for potential debugging
+        stdout, stderr = ffmpeg.run(stream, overwrite_output=True, capture_stdout=True, capture_stderr=True)
+
+        print("-" * 20)
+        print("Audio extraction successful!")
+        print(f"Output saved to: {audio_path}")
+        print("-" * 20)
+
+    except ffmpeg.Error as e:
+        print('FFmpeg execution failed!', file=sys.stderr)
+        print('stdout:', stdout.decode('utf8', errors='ignore'), file=sys.stderr)
+        print('stderr:', stderr.decode('utf8', errors='ignore'), file=sys.stderr)
+        print(f"An ffmpeg error occurred: {e}", file=sys.stderr)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}", file=sys.stderr)
 
 
 
@@ -92,10 +151,10 @@ def segment_audio_flexible(input_path, output_dir,
             ffmpeg_params=["-ac", "1"] # Force mono audio (1 channel)
         )
         logger.info("Input is assumed to be an audio file.")
-        
+
     metadata = torchaudio.info(audio_path_to_process)
     print("Audio information: ", metadata)
-                               
+
     # --- Audio Processing ---
     try:
         # Load the audio (either original or extracted)
