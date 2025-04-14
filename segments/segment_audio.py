@@ -22,7 +22,7 @@ logger = logging.getLogger("tts_dataset_generator")
 
 
 
-def extract_audio_ffmpeg_py(video_path, audio_path):
+def extract_audio_ffmpeg_py(video_path, audio_path, sample_rate = 22050):
     """
     Extracts audio from a video file and saves it as a mono, 16-bit PCM WAV
     at 22050 Hz using ffmpeg-python.
@@ -56,7 +56,7 @@ def extract_audio_ffmpeg_py(video_path, audio_path):
             audio_path,
             acodec='pcm_s16le',       # Audio codec: 16-bit signed little-endian PCM
             ac=1,                     # Audio channels: 1 (mono)
-            ar='22050',               # Audio sample rate: 22050 Hz
+            ar=str(sample_rate),               # Audio sample rate: 22050 Hz
             format='wav'            # Explicitly set format (optional if extension is .wav)
         )
 
@@ -79,7 +79,7 @@ def extract_audio_ffmpeg_py(video_path, audio_path):
 
 
 
-def segment_audio_flexible(input_path, output_dir,
+def segment_audio_flexible(input_path, output_dir, sample_rate= 22050,
                            min_duration_s=3.0, max_duration_s=10.0,
                            silence_thresh_dbfs=-40, min_silence_len_ms=250,
                            keep_silence_ms=150,
@@ -125,7 +125,7 @@ def segment_audio_flexible(input_path, output_dir,
             audio_path_to_process = temp_audio_filename
             video.audio.write_audiofile(
                 audio_path_to_process,
-                fps=22050,          # Sample rate
+                fps=sample_rate,          # Sample rate
                 nbytes=2,           # Bytes per sample (2 for 16-bit)
                 codec='pcm_s16le',  # PCM signed 16-bit little-endian codec
                 ffmpeg_params=["-ac", "1"] # Force mono audio (1 channel)
@@ -145,7 +145,7 @@ def segment_audio_flexible(input_path, output_dir,
         audio_path_to_process = temp_audio_filename
         audio.write_audiofile(
             audio_path_to_process,
-            fps=22050,          # Sample rate
+            fps=sample_rate,          # Sample rate
             nbytes=2,           # Bytes per sample (2 for 16-bit)
             codec='pcm_s16le',  # PCM signed 16-bit little-endian codec
             ffmpeg_params=["-ac", "1"] # Force mono audio (1 channel)
