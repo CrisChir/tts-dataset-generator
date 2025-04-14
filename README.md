@@ -78,7 +78,7 @@ If you do not have enough equipment to choose the "large" whisper model, we reco
 python main.py --file your_audio_or_video_file.mp4 --model large --language tr
 
 # Or
-python main.py --f your_audio_or_video_file.mp4 --m small --l tr
+python main.py --f your_audio_or_video_file.mp4 -m small -l tr
 ```
 
 This will:
@@ -98,7 +98,9 @@ python main.py \
   --min-silence-len 500 \
   --keep-silence 100 \
   --model medium \
-  --language tr
+  --language tr \
+  --ljspeech True \
+  --sample_rate 22050
 ```
 
 ### All Available Parameters
@@ -113,6 +115,8 @@ python main.py \
 | `--keep-silence` | Padding silence (ms) to keep at segment boundaries | 150 |
 | `--model` or `-m` | Whisper model size (tiny/base/small/medium/large) | large |
 | `--language` or `-l` | Language code for transcription and number conversion | en |
+| `--ljspeech` | Dataset format for coqui-ai/TTS formatter ljspeech | False |
+| `--sample_rate` | Must be the same as the sampling rate of the sounds in the dataset | 22050 |
 | `--log-level` | Set logging level (DEBUG/INFO/WARNING/ERROR/CRITICAL) | INFO |
 
 ## 🌐 Language Support
