@@ -50,6 +50,8 @@ def setup_argparse():
                               help="Language code for transcription and number conversion")
     parser.add_argument("--ljspeech", type=bool, default=False,
                               help="Dataset format for coqui-ai/TTS")
+    parser.add_argument("--sample_rate", type=int, default=22050,
+                              help="Must be the same as the sampling rate of the sounds in the dataset")
     parser.add_argument("--log-level", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                               default="INFO", help="Set logging level")
     
@@ -89,6 +91,7 @@ def main():
     result = segment_audio_flexible(
         input_path=args.file,
         output_dir="MyTTSDataset/wavs",
+        sample_rate=args.sample_rate,
         min_duration_s=args.min_duration,
         max_duration_s=args.max_duration,
         silence_thresh_dbfs=args.silence_threshold,
