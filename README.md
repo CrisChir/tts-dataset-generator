@@ -115,7 +115,7 @@ python main.py \
 | `--keep-silence` | Padding silence (ms) to keep at segment boundaries | 150 |
 | `--model` or `-m` | Whisper model size (tiny/base/small/medium/large) | large |
 | `--language` or `-l` | Language code for transcription and number conversion | en |
-| `--ljspeech` | Dataset format for coqui-ai/TTS formatter ljspeech | False |
+| `--ljspeech` | Dataset format for coqui-ai/TTS formatter ljspeech | True |
 | `--sample_rate` | Must be the same as the sampling rate of the sounds in the dataset | 22050 |
 | `--log-level` | Set logging level (DEBUG/INFO/WARNING/ERROR/CRITICAL) | INFO |
 
