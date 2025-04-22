@@ -209,7 +209,12 @@ The generated dataset works seamlessly with:
 ### Compatible Metadata Format
 
 The generated `metadata.csv` follows the LJSpeech format widely used in TTS training:
-
+--ljspeech True
+```
+segment_1|The quick brown fox jumps over the lazy dog.|The quick brown fox jumps over the lazy dog.
+segment_2|She sells seashells by the seashore.|She sells seashells by the seashore.
+```
+--ljspeech False
 ```
 wavs/segment_1.wav|The quick brown fox jumps over the lazy dog.
 wavs/segment_2.wav|She sells seashells by the seashore.
@@ -248,14 +253,23 @@ python main.py --file interview.mp4 --model medium --language en
    - Audio segments are saved in `MyTTSDataset/wavs/`
    - Transcriptions are in `MyTTSDataset/metadata.csv`
 
-4. **Format of metadata.csv**:
+4. **Format of ljspeech metadata.csv**:
+  wav_filename|text|normalized_text or text
+```
+segment_1|Hello and welcome to our tutorial on text to speech.|Hello and welcome to our tutorial on text to speech.
+segment_2|Today we'll learn how to create high quality voice datasets.|Today we'll learn how to create high quality voice datasets.
+segment_3|The first step is to record clear audio samples.|The first step is to record clear audio samples.
+```
+
+5. **Format of metadata.csv**:
+  wav_filename|text
 ```
 wavs/segment_1.wav|Hello and welcome to our tutorial on text to speech.
 wavs/segment_2.wav|Today we'll learn how to create high quality voice datasets.
 wavs/segment_3.wav|The first step is to record clear audio samples.
 ```
 
-5. **Use the dataset** for training TTS models like Tacotron, VITS, F5-TTS, piper or other custom voice systems
+6. **Use the dataset** for training TTS models like Tacotron, VITS, F5-TTS, piper or other custom voice systems
 
 ## 🚀 Performance Tips
 
