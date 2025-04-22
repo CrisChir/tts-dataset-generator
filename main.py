@@ -48,7 +48,7 @@ def setup_argparse():
                               help="Whisper model size (larger = more accurate but slower)")
     parser.add_argument("--language", "-l", type=str, default="en",
                               help="Language code for transcription and number conversion")
-    parser.add_argument("--ljspeech", type=bool, default=False,
+    parser.add_argument("--ljspeech", type=bool, default=True,
                               help="Dataset format for coqui-ai/TTS")
     parser.add_argument("--sample_rate", type=int, default=22050,
                               help="Must be the same as the sampling rate of the sounds in the dataset")
