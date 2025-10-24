@@ -4,3 +4,4 @@ pydub
 openai-whisper
 natsort
 torch
+pyannote.audio
